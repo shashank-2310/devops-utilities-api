@@ -59,7 +59,8 @@ Example:
 - Service: [services/aws_service.py](services/aws_service.py)
 - Description: Returns summary of AWS services - EC2 & S3
 - Endpoints (prefix `/aws`):
-	- `GET /aws/s3`:S3 bucket summary.
+	- `GET /aws/s3`: S3 bucket summary.
+	- `GET /aws/s3/analysis`: S3 bucket age analysis.
 	- `GET /aws/ec2`: EC2 instance summary and details.
 
 `GET /aws/s3` response includes:
@@ -67,6 +68,12 @@ Example:
 - `total_new_buckets`: Number of S3 buckets created within 90days.
 - `total_old_buckets`: Number of S3 buckets older than 90days.
 - `new_buckets` / `old_buckets`: List containing names of respective S3 buckets.
+
+`GET /aws/s3/analysis` response includes:
+- `BucketName`: Name of S3 bucket
+- `Age`: Age of bucket in days
+- `AgeCategory`: Category based on bucket age (<30 days, 30-180 days,...etc)
+- `CreationDate`: Creation date of bucket
 
 `GET /aws/ec2` response includes:
 - `total_instances`: Total number of EC2 instances discovered.
