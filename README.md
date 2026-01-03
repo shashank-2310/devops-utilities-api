@@ -1,5 +1,6 @@
 
 # Internal DevOps Utilities API
+<img width="1887" height="892" alt="Screenshot 2026-01-04 014317" src="https://github.com/user-attachments/assets/8cf5788c-d8b8-4ad8-8859-7e85d3846439" />
 
 Lightweight internal FastAPI service that exposes small operational utilities for system health, AWS usage inspection, and quick developer tools.
 
