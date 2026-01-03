@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from services.aws_service import get_buckets_info, get_bucket_age_info, get_instances_info
+from services.aws_service import get_buckets_info, get_bucket_age_info, get_instances_info, get_cost_and_usage_info
 
 router = APIRouter()
 
@@ -24,14 +24,14 @@ def get_buckets():
         )
 
 
-@router.get("/s3/analysis", status_code=200)
+@router.get("/s3/analytics", status_code=200)
 def get_bucket_age_analysis():
     """
         This API gets the Amazon S3 bucket age analysis:
-        - BucketName: Name of S3 bucket
-        - Age: Age of bucket in days
-        - AgeCategory: Category based on bucket age (<30 days, 30-180 days,...etc)
-        - CreationDate: Creation date of bucket
+        - BucketName: Name of the S3 bucket
+        - Age: Age of the bucket in days
+        - AgeCategory: Age category of the bucket (<30 days, 30-180 days, 180-365 days, >1 year, etc)
+        - CreationDate: Creation date of the bucket
     """ 
 
     try:
@@ -59,6 +59,28 @@ def get_instances():
     try:
         instances = get_instances_info()
         return instances
+    except:
+        raise HTTPException(
+            status_code=500,
+            detail="Internal Server Error"
+        )
+    
+
+@router.get("/summary", status_code=200)
+def get_cost_and_usage():
+    """
+        This API gets the Amazon Cost and Usage information:
+        - from: Start date of the cost analysis period
+        - month: Month label of the cost analysis period
+        - total_cost: Total cost incurred during the period
+        - currency: Currency of the cost values
+        - estimated: Indicates if the cost is estimated (bill finalization status)
+        - by_service: Breakdown of costs by AWS service
+    """
+
+    try:
+        cost_and_usage = get_cost_and_usage_info()
+        return cost_and_usage
     except:
         raise HTTPException(
             status_code=500,

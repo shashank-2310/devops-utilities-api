@@ -19,16 +19,22 @@ def _validate_creds(session):
         raise RuntimeError(f"Unexpected error while checking credentials: {e}")
 
 
-def _s3_utility():
-    # Establish connection to S3 and fetch all S3 buckets
-    # Then get Current date and time
+def _get_session_and_date():
+    # Establish boto3 session
     session = boto3.Session()
     _validate_creds(session)
-    
-    s3 = session.client("s3")
-    buckets = s3.list_buckets().get("Buckets", [])
 
+    #Get current date and time
     current_datetime = datetime.now(timezone.utc)
+    return session, current_datetime
+
+
+def _s3_utility():
+    #Fetch all S3 buckets and get Current date and time
+    session, current_datetime = _get_session_and_date()
+    s3 = session.client("s3")
+    
+    buckets = s3.list_buckets().get("Buckets", [])
 
     return buckets, current_datetime
 
@@ -94,8 +100,7 @@ def get_bucket_age_info():
 
 def get_instances_info():
     #Get Amazon EC2 instance info
-    session = boto3.Session()
-    _validate_creds(session)
+    session = _get_session_and_date()[0]
     ec2 = session.client("ec2")
 
     paginator = ec2.get_paginator("describe_instances")
@@ -159,3 +164,95 @@ def get_instances_info():
         "stopped_instances": stopped_instances,
         "other_instances": other_instances
     }
+
+
+def get_cost_and_usage_info():
+    session, current_datetime = _get_session_and_date()
+    ce = session.client("ce") #ce = Cost Explorer
+
+    start_date = (current_datetime - timedelta(days=90)).strftime("%Y-%m-%d")
+    end_date = current_datetime.strftime("%Y-%m-%d")
+
+    try:
+        response  = ce.get_cost_and_usage(
+            TimePeriod={
+                'Start': start_date,
+                'End': end_date
+            },
+            Granularity='MONTHLY',
+            Metrics=['UnblendedCost'],
+            GroupBy=[
+                {
+                    'Type': 'DIMENSION',
+                    'Key': 'SERVICE'
+                }
+            ]
+        ).get("ResultsByTime", [])
+    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+        print("Unexpected error occurred: ", e)
+        return []
+
+    if not response:
+        return []
+
+    def normalize_cost(value, threshold=0.01):
+        return 0.0 if abs(value) < threshold else round(value, 2)
+    
+    def get_total_cost(period):
+        total = period.get("Total", {}).get("UnblendedCost", {}).get("Amount")
+        if total is not None:
+            return normalize_cost(float(total))
+        
+        total = sum(
+            float(group["Metrics"]["UnblendedCost"]["Amount"])
+            for group in period.get("Groups", [])
+        )
+        return normalize_cost(total)
+    
+    def get_currency(period):
+        total = period.get("Total", {}).get("UnblendedCost")
+        if total:
+            return total.get("Unit", "USD")
+        
+        for group in period.get("Groups", []):
+            metrics = group.get("Metrics", {}).get("UnblendedCost")
+            if metrics:
+                return metrics.get("Unit", "USD")
+        
+        return "USD"
+    
+    def get_services(period):
+        by_service = dict()
+
+        for group in period.get("Groups", []):
+            metrics = group.get("Metrics", {}).get("UnblendedCost")
+            if not metrics:
+                continue
+
+            service_cost = normalize_cost(float(metrics.get("Amount", 0.0)))
+            if service_cost == 0.0:
+                continue
+
+            service_name = group["Keys"][0]
+            by_service[service_name] = service_cost
+        
+        return by_service
+
+    cost_and_usage = []
+
+    for result in response:
+        start = result.get("TimePeriod").get("Start")
+        month = datetime.strptime(start, "%Y-%m-%d").strftime("%B %Y")
+
+        data = {
+            "from": start,
+            "month": month,
+            "total_cost": get_total_cost(result),
+            "currency": get_currency(result),
+            "estimated": result.get("Estimated", False),
+            "by_service": get_services(result)
+        }
+        cost_and_usage.append(data)
+    
+    return cost_and_usage
+
