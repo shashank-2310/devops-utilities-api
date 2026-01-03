@@ -22,4 +22,3 @@ def hello():
 app.include_router(system_health.router)
 app.include_router(aws.router, prefix="/aws")
 #TODO: cost analysis
-#TODO: bucket analysis

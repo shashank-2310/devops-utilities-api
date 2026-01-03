@@ -3,8 +3,8 @@ import botocore.exceptions
 from datetime import datetime, timezone, timedelta
 
 
-def __validate_creds(session):
-    # Validate credentials by making a lightweight STS call
+def _validate_creds(session):
+    #Validate credentials by making a lightweight STS call
     try:
         sts = session.client("sts")
         sts.get_caller_identity()
@@ -19,16 +19,23 @@ def __validate_creds(session):
         raise RuntimeError(f"Unexpected error while checking credentials: {e}")
 
 
-def get_buckets_info():
-    #Get Amazon S3 bucket info 
+def _s3_utility():
+    # Establish connection to S3 and fetch all S3 buckets
+    # Then get Current date and time
     session = boto3.Session()
-    __validate_creds(session)
-
+    _validate_creds(session)
+    
     s3 = session.client("s3")
     buckets = s3.list_buckets().get("Buckets", [])
 
-    current_datetime = datetime.now(timezone.utc).astimezone()
-    print(current_datetime)
+    current_datetime = datetime.now(timezone.utc)
+
+    return buckets, current_datetime
+
+
+def get_buckets_info():
+    #Get Amazon S3 bucket info 
+    buckets, current_datetime = _s3_utility()
 
     old_buckets = []
     new_buckets = []
@@ -53,10 +60,42 @@ def get_buckets_info():
     }
 
 
+def get_bucket_age_info():
+    #Get S3 bucket age analysis
+    buckets, current_datetime = _s3_utility()
+    bucket_details = []
+    
+    def _bucket_age_cat(days):
+        if days < 30:
+            return "<30 days"
+        elif 30 <= days <= 180:
+            return "30-180 days"
+        elif 180 < days <= 365:
+            return "180-365 days"
+        else:
+            years = days // 365
+            return f">{years} years"
+
+    for bucket in buckets:
+        bucket_name = bucket['Name']
+        creation_date = bucket['CreationDate']
+        age = (current_datetime - creation_date).days
+        age_cat = _bucket_age_cat(age)
+        data = {
+            "BucketName": bucket_name,
+            "AgeDays": age,
+            "AgeCategory": age_cat,
+            "CreationDate": creation_date.strftime("%Y-%m-%d")
+        }
+        bucket_details.append(data)
+
+    return bucket_details
+    
+
 def get_instances_info():
     #Get Amazon EC2 instance info
     session = boto3.Session()
-    __validate_creds(session)
+    _validate_creds(session)
     ec2 = session.client("ec2")
 
     paginator = ec2.get_paginator("describe_instances")

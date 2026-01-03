@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from services.aws_service import get_buckets_info, get_instances_info
+from services.aws_service import get_buckets_info, get_bucket_age_info, get_instances_info
 
 router = APIRouter()
 
@@ -16,6 +16,26 @@ def get_buckets():
 
     try:
         buckets = get_buckets_info()
+        return buckets
+    except:
+        raise HTTPException(
+            status_code=500,
+            detail="Internal Server Error"
+        )
+
+
+@router.get("/s3/analysis", status_code=200)
+def get_bucket_age_analysis():
+    """
+        This API gets the Amazon S3 bucket age analysis:
+        - BucketName: Name of S3 bucket
+        - Age: Age of bucket in days
+        - AgeCategory: Category based on bucket age (<30 days, 30-180 days,...etc)
+        - CreationDate: Creation date of bucket
+    """ 
+
+    try:
+        buckets = get_bucket_age_info()
         return buckets
     except:
         raise HTTPException(
