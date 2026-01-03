@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <title>DevOps Utilities API</title>
+        <link rel="stylesheet" href="/static/styles.css">
+    </head>
+    <body>
+        <div class="container">
+            <div>
+                <div class="header">
+                    <div class="logo">DU</div>
+                    <div class="title">
+                        <h1>DevOps Utilities API</h1>
+                        <p>Internal utilities for health checks, AWS insights, and metrics.</p>
+                    </div>
+                </div>
+
+                <div class="panel spaced">
+                    <p class="muted-small">Quick Actions</p>
+                    <div class="spacer-sm"></div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap">
+                        <a href="/docs" class="btn">Open Docs</a>
+                        <a href="/redoc" class="btn secondary">Open ReDoc</a>
+                    </div>
+                </div>
+
+                <h3 class="section-title">Available Endpoints</h3>
+                <ul class="endpoints">
+                    <li class="endpoint"><a href="/health">GET /health</a><small>System Health</small></li>
+                    <li class="endpoint"><a href="/aws/s3">GET /aws/s3</a><small>S3 Bucket Information</small></li>
+                    <li class="endpoint"><a href="/aws/s3/analytics">GET /aws/s3/analytics</a><small>S3 Bucket Age Analysis</small></li>
+                    <li class="endpoint"><a href="/aws/ec2">GET /aws/ec2</a><small>EC2 Instance Information</small></li>
+                    <li class="endpoint"><a href="/aws/summary">GET /aws/summary</a><small>Cost & Usage</small></li>
+                </ul>
+            </div>
+
+                <div class="panel">
+                <h3 class="panel-title">Summary</h3>
+                <p class="summary-p">A compact dashboard for internal developer and operator utilities.</p>
+                <div class="controls">
+                    <a href="/aws/s3" class="btn">S3 Buckets</a>
+                    <a href="/aws/ec2" class="btn">EC2 Instances</a>
+                    <a href="/aws/summary" class="btn secondary">Cost Summary</a>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div class="footer-left">
+                    <div class="made-by">Made by Shashank</div>
+                    <div class="socials">
+                        <a href="https://github.com/shashank-2310" target="_blank" rel="noopener">GitHub</a>
+                        <span>•</span>
+                        <a href="https://linkedin.com/in/shashankgupta23" target="_blank" rel="noopener">LinkedIn</a>
+                    </div>
+                </div>
+                <div class="footer-right">Version 1.0.0 • FastAPI</div>
+            </div>
+        </div>
+    </body>
+    </html>

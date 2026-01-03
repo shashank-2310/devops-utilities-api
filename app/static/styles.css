@@ -1,0 +1,246 @@
+:root {
+	--bg1: #0f172a;
+	--accent: #60a5fa;
+	--muted: #94a3b8;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(180deg, var(--bg1), #071032);
+	color: #e6eef8;
+}
+
+.container {
+	width: min(920px, 94%);
+	padding: 36px;
+	border-radius: 16px;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.015));
+	backdrop-filter: blur(6px);
+	box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+	border: 1px solid rgba(255, 255, 255, 0.04);
+	display: grid;
+	grid-template-columns: 1fr 360px;
+	gap: 28px;
+	align-items: start;
+}
+
+.header {
+	display: flex;
+	gap: 16px;
+	align-items: center;
+}
+
+.logo {
+	width: 56px;
+	height: 56px;
+	border-radius: 12px;
+	background: linear-gradient(135deg, #2563eb, #7c3aed);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-weight: 700;
+	font-size: 20px;
+	box-shadow: 0 6px 20px rgba(37, 99, 235, 0.18);
+}
+
+.title {
+	margin: 0;
+}
+
+.title h1 {
+	font-size: 20px;
+	margin: 0 0 6px 0;
+}
+
+.title p {
+	margin: 0;
+	color: var(--muted);
+	font-size: 13px;
+}
+
+.endpoints {
+	margin-top: 18px;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.endpoint {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 12px;
+	border-radius: 10px;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent);
+	border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.endpoint a {
+	color: var(--accent);
+	text-decoration: none;
+	font-family: monospace;
+	font-weight: 600;
+	font-size: 13px;
+}
+
+.endpoint small {
+	color: var(--muted);
+	margin-left: 6px;
+	font-size: 12px;
+}
+
+.panel {
+	padding: 18px;
+	border-radius: 12px;
+	background: linear-gradient(180deg, #081226, #051028);
+	border: 1px solid rgba(255, 255, 255, 0.03);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.controls {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.btn {
+	display: inline-block;
+	padding: 10px 14px;
+	border-radius: 10px;
+	background: #2563eb;
+	color: white;
+	text-decoration: none;
+	font-weight: 600;
+	text-align: center;
+}
+
+.btn.secondary {
+	background: transparent;
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	color: var(--muted);
+}
+
+/* Hover / focus states */
+.btn,
+.btn.secondary,
+.endpoint a,
+.socials a {
+	transition: all 160ms ease;
+}
+
+.btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 24px rgba(37, 99, 235, 0.18);
+}
+
+.btn.secondary:hover {
+	background: rgba(255,255,255,0.02);
+	border-color: rgba(255,255,255,0.12);
+	color: #e6eef8;
+}
+
+.endpoint a:hover {
+	text-decoration: underline;
+	color: #93c5fd;
+}
+
+.socials a {
+	color: var(--muted);
+	text-decoration: none;
+}
+
+.socials a:hover {
+	color: #cfe8ff;
+	text-decoration: underline;
+}
+
+.footer {
+	grid-column: 1/-1;
+	margin-top: 10px;
+	color: var(--muted);
+	font-size: 12px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+}
+
+.footer-left {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.made-by {
+	font-weight: 600;
+	color: #e6eef8;
+	font-size: 13px;
+}
+
+.socials {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	font-size: 12px;
+}
+
+.footer-right {
+	color: var(--muted);
+	white-space: nowrap;
+}
+
+@media (max-width: 880px) {
+	.container {
+		grid-template-columns: 1fr;
+	}
+	.footer {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 6px;
+		text-align: left;
+	}
+}
+
+/* Utility classes extracted from inline styles */
+.panel.spaced {
+	margin-top: 18px;
+}
+
+.muted-small {
+	margin: 0;
+	color: var(--muted);
+	font-size: 14px;
+}
+
+.spacer-sm {
+	height: 12px;
+}
+
+.section-title {
+	margin-top: 20px;
+	margin-bottom: 8px;
+	color: #cfe8ff;
+}
+
+.summary-p {
+	margin: 0 0 12px 0;
+	color: var(--muted);
+	font-size: 13px;
+}
+
+.panel-title {
+	margin-top: 0;
+	margin-bottom: 6px;
+}
