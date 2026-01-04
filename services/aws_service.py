@@ -1,43 +1,6 @@
-import boto3
 import botocore.exceptions
 from datetime import datetime, timezone, timedelta
-
-
-def _validate_creds(session):
-    #Validate credentials by making a lightweight STS call
-    try:
-        sts = session.client("sts")
-        sts.get_caller_identity()
-    
-    except botocore.exceptions.NoCredentialsError:
-        raise RuntimeError("AWS credentials not found. Configure credentials or set environment variables.")
-    
-    except botocore.exceptions.ClientError as e:
-        raise RuntimeError(f"AWS client error during credential check: {e}")
-    
-    except Exception as e:
-        raise RuntimeError(f"Unexpected error while checking credentials: {e}")
-
-
-def _get_session_and_date():
-    # Establish boto3 session
-    session = boto3.Session()
-    _validate_creds(session)
-
-    #Get current date and time
-    current_datetime = datetime.now(timezone.utc)
-    return session, current_datetime
-
-
-def _s3_utility():
-    #Fetch all S3 buckets and get Current date and time
-    session, current_datetime = _get_session_and_date()
-    s3 = session.client("s3")
-    
-    buckets = s3.list_buckets().get("Buckets", [])
-
-    return buckets, current_datetime
-
+from services.utils.utils import _s3_utility, _get_session_and_date
 
 def get_buckets_info():
     #Get Amazon S3 bucket info 
